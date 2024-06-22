@@ -1,0 +1,66 @@
+/*
+ * adc.c
+ *
+ *  Created on: Oct 8, 2022
+ *      Author: SHAHD MOHAMED
+ */
+
+#include "adc.h"
+#include "common_macros.h"
+#include <avr/io.h>
+
+/* global struct object to hold ADC_congiguration settings ----> Vref, Prescalar */
+ADC_ConfigType ADC_config={INTERNAL_AREF, F_CPU_8};
+
+
+/*
+ * Description:
+ * Function to set Vref and Prescalar for ADC
+ */
+void ADC_init(const ADC_ConfigType * Config_Ptr)
+{
+	/* insert Vref used in first two bits of ADMUX register */
+	ADMUX =(ADMUX & 0x3F) | ( (Config_Ptr->ref_volt)<<6);
+
+	/* Clear ADLAR so that ADC register is right adjusted */
+	CLEAR_BIT(ADMUX, ADLAR);
+
+	/*MUX4:0  = 00000 to choose channel 0 as initialization*/
+	ADMUX = (ADMUX & 0xE0) | (0x00);
+
+	/* insert prescalar in last three bits of ADCSRA register */
+	ADCSRA = (ADCSRA & 0xF8) | (Config_Ptr->prescaler);
+
+	/*Disable ADC interrupt by clearing ADIE bit */
+	CLEAR_BIT(ADCSRA, ADIE);
+
+	/* Disable auto triggering of ADC */
+	CLEAR_BIT(ADCSRA, ADATE);
+
+	/* Enable ADC by setting ADEN bit to 1 in ADCSRA register */
+	SET_BIT(ADCSRA, ADEN);
+}
+
+/*
+ * Description:
+ * Function to start the conversion and return digital value on the
+ * chosen channel when conversion is done.
+ */
+uint16 ADC_readChannel (uint8 channel_num)
+{
+	/* Insert channel_num in last five bits of ADMUX register */
+	ADMUX = (ADMUX & 0xE0) | (channel_num & 0x07);
+
+	/*Start the conversion */
+	SET_BIT(ADCSRA, ADSC);
+
+	/*Wait until conversion is complete */
+	while (BIT_IS_CLEAR(ADCSRA,ADIF));
+
+	/*Clear Flag when conversion is done*/
+	SET_BIT(ADCSRA,ADIF);
+
+	/* return digital value */
+	return ADC;
+
+}

@@ -1,0 +1,53 @@
+/*
+ * File name: functions.h
+ *
+ *      Author: SHAHD MOHAMED
+ */
+
+#ifndef FUNCTIONS_H_
+#define FUNCTIONS_H_
+
+#include"std_types.h"
+/*******************************************************************************
+ *                            Macros                               *
+ *******************************************************************************/
+#define FIRST_RANGE(value)        ( (value) < 30)
+#define SECOND_RANGE(value)       ( (value) >= 30 && (value) <60 )
+#define THIRD_RANGE(value)        ( (value) >= 60 && (value) <90 )
+#define FOURTH_RANGE(value)       ( (value) >= 90 && (value) <120)
+#define FIFTH_RANGE(value)        ( (value) >120)
+
+
+
+/*******************************************************************************
+ *                                Definitions                                  *
+ *******************************************************************************/
+#define ZERO_SPEED                           0
+#define QUARTER_THE_MAX_SPEED                25
+#define HALF_THE_MAX_SPEED                   50
+#define THREE_QUARTERS_THE_MAX_SPEED         75
+#define MAX_SPEED                            100
+
+
+/*******************************************************************************
+ *                          Types Declarations                               *
+ *******************************************************************************/
+typedef enum
+{
+	OFF, ON
+}Motor_Power;
+
+
+/*******************************************************************************
+ *                          Functions Prototypes                               *
+ *******************************************************************************/
+
+/*
+ * Description:
+ * Function to drive the speed of the fan according to temperature
+ * measured from the sensor
+ */
+DcMotor_State Set_MotorState(const uint8 temp);
+
+
+#endif /* FUNCTIONS_H_ */

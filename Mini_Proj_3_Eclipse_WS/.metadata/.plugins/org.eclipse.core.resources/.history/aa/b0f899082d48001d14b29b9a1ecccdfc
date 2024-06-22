@@ -1,0 +1,110 @@
+/*
+ * APPlication.c
+ *Author: SHAHD MOHAMED
+ */
+#include"adc.h"
+#include"lcd.h"
+#include"lm35_sensor.h"
+#include"DC_Motor.h"
+#include<avr/io.h>
+
+#define ZERO_SPEED                       0
+#define QUARTER_MAX_SPEED                25
+#define HALF_MAX_SPEED                   50
+#define THREE_QUARTERS_MAX_SPEED         75
+#define MAX_SPEED                        100
+
+/*******************************************************************************
+ *                          Types Declarations                               *
+ *******************************************************************************/
+typedef enum
+{
+	OFF, ON
+}Fan_state;
+
+/*******************************************************************************
+ *                          Functions Prototypes                               *
+ *******************************************************************************/
+
+/*
+ * Description:
+ * Function to drive the speed of the fan according to temperature
+ * measured from the sensor
+ */
+Fan_state Set_FanState(const uint8 temp);
+
+
+
+int main(void)
+{
+	uint8 temp;
+    ADC_config.prescaler= INTERNAL_AREF;
+    ADC_config.ref_volt= F_CPU_8;
+	ADC_init(&ADC_config); /* Initialize ADC driver */
+	LCD_init(); /* Initialize LCD driver */
+	DcMotor_Init(); /* Initialize DC_Motor driver */
+
+	while(1)
+	{
+		/*get temperature from sensor */
+		temp=LM35_getTemperature();
+
+
+		if( Set_FanState(temp) )
+		{
+			LCD_displayStringRowColumn(0, 4," Fan is ON ");
+		}
+		else
+		{
+			LCD_displayStringRowColumn(0,4," Fan is OFF");
+		}
+
+		LCD_displayStringRowColumn(1,4," temp= ");
+		if(temp >= 100)
+		{
+			LCD_intgerToString(temp);
+		}
+		else
+		{
+			LCD_intgerToString(temp);
+			/* In case the digital value is two or one digits print space in the next digit place */
+			LCD_displayCharacter(' ');
+		}
+	}
+}
+
+/*
+ * Description:
+ * Function to drive the speed of the fan according to temperature
+ * measured from the sensor
+ */
+Fan_state Set_FanState(const uint8 temp)
+{
+	Fan_state state = ON;
+	if(temp < 30)
+	{
+		DcMotor_Rotate(STOP, ZERO_SPEED);
+		state= OFF;
+	}
+	else if(temp >= 30 && temp<60)
+	{
+		DcMotor_Rotate(CW, QUARTER_MAX_SPEED);
+	}
+	else if(temp >= 60 && temp<90)
+	{
+		DcMotor_Rotate(CW, HALF_MAX_SPEED);
+	}
+	else if(temp >= 90 && temp<120)
+	{
+		DcMotor_Rotate(CW, THREE_QUARTERS_MAX_SPEED);
+	}
+	else if(temp >= 120)
+	{
+		DcMotor_Rotate(CW, MAX_SPEED);
+	}
+
+	return state;
+}
+
+
+

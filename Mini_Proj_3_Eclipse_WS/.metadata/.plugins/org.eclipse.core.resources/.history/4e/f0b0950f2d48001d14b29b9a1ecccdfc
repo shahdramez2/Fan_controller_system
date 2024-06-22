@@ -1,0 +1,44 @@
+/*
+ * functions.c
+ *
+ *  Created on: Oct 10, 2022
+ *      Author: SHAHD MOHAMED
+ */
+
+#include"functions.h"
+
+
+/*
+ * Description:
+ * Function to drive the speed of the fan according to temperature
+ * measured from the sensor
+ */
+Fan_state Set_FanState(const uint8 temp)
+{
+	Fan_state state = ON;
+	if(temp < 30)
+	{
+		DcMotor_Rotate(STOP, ZERO_SPEED);
+		state= OFF;
+	}
+	else if(temp >= 30 && temp<60)
+	{
+		DcMotor_Rotate(CW, QUARTER_MAX_SPEED);
+	}
+	else if(temp >= 60 && temp<90)
+	{
+		DcMotor_Rotate(CW, HALF_MAX_SPEED);
+	}
+	else if(temp >= 90 && temp<120)
+	{
+		DcMotor_Rotate(CW, THREE_QUARTERS_MAX_SPEED);
+	}
+	else if(temp >= 120)
+	{
+		DcMotor_Rotate(CW, MAX_SPEED);
+	}
+
+	return state;
+}
+
+

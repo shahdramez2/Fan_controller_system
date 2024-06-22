@@ -1,0 +1,42 @@
+/*
+ * functions.h
+ *
+ *  Created on: Oct 10, 2022
+ *      Author: SHAHD MOHAMED
+ */
+
+#ifndef FUNCTIONS_H_
+#define FUNCTIONS_H_
+
+#include"std_types.h"
+
+/*******************************************************************************
+ *                                Definitions                                  *
+ *******************************************************************************/
+#define ZERO_SPEED                       0
+#define QUARTER_MAX_SPEED                25
+#define HALF_MAX_SPEED                   50
+#define THREE_QUARTERS_MAX_SPEED         75
+#define MAX_SPEED                        100
+
+/*******************************************************************************
+ *                          Types Declarations                               *
+ *******************************************************************************/
+typedef enum
+{
+	OFF, ON
+}Motor_State;
+
+/*******************************************************************************
+ *                          Functions Prototypes                               *
+ *******************************************************************************/
+
+/*
+ * Description:
+ * Function to drive the speed of the fan according to temperature
+ * measured from the sensor
+ */
+Motor_State Set_MotorState(const uint8 temp);
+
+
+#endif /* FUNCTIONS_H_ */
